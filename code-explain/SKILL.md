@@ -1,23 +1,23 @@
 ---
 name: code-explain
-description: Use when the user asks you to explain what a piece of code does — requires reading the full project scope first, then producing a concise two-layer explanation (technical + domain layman's terms) grounded in whole-project context.
+description: Use when the user asks you to explain what a piece of code does. Requires reading the full project scope first, then producing a concise two-layer explanation (technical + domain layman's terms) grounded in whole-project context.
 ---
 
 # Code Explain
 
-## Step 1 — Read the entire project first (required)
+## Step 1: Read the entire project first (required)
 
 Before writing anything, read `CLAUDE.md` (if present), every script in the project root, any READMEs, and run `ls` to understand the directory structure. Only proceed after you have a complete picture of how the target code fits into the larger system. Explaining before reading the project produces explanations that miss upstream dependencies, downstream consumers, and documented design decisions.
 
-## Step 2 — Technical explanation
+## Step 2: Technical explanation
 
 Write one or two concise paragraphs covering: what role this code plays in the pipeline, what inputs it takes and where they come from, what the core logic does (call out non-obvious thresholds, priors, windows, or algorithmic choices explicitly), what it outputs and what consumes those outputs, and any design decisions documented in CLAUDE.md or a README (cite them directly, don't paraphrase).
 
-Keep it tight. One idea per sentence. If CLAUDE.md explains *why* something is done a certain way, say so — don't rediscover it.
+Keep it tight. One idea per sentence. If CLAUDE.md explains *why* something is done a certain way, say so. Don't rediscover it.
 
-## Step 3 — Layman's explanation
+## Step 3: Layman's explanation
 
-Re-explain the same code in one or two paragraphs using domain analogies, in the same order as the technical explanation so the reader can cross-reference. For baseball/sports analytics projects, frame logic as scouting decisions, in-game strategy, box-score math, or on-field action — use terms the reader already knows (ERA, xwOBA, pitch count, pull the starter). Each concept in the technical explanation maps to exactly one plain-language counterpart; don't introduce new ideas here.
+Re-explain the same code in one or two paragraphs using domain analogies, in the same order as the technical explanation so the reader can cross-reference. For baseball/sports analytics projects, frame logic as scouting decisions, in-game strategy, box-score math, or on-field action. Use terms the reader already knows: ERA, xwOBA, pitch count, pull the starter. Each concept in the technical explanation maps to exactly one plain-language counterpart. Don't introduce new ideas here.
 
 ## Writing style (apply throughout)
 
@@ -29,7 +29,7 @@ Apply humanizer principles to both explanations:
 - No rule of three. If two examples cover it, stop at two
 - Vary sentence length. Short sentences after long ones
 - Be specific. "drops 6 inches after commit" beats "generates significant late movement"
-- No vague attributions ("experts believe", "research suggests") — cite the actual source or don't claim it
+- No vague attributions ("experts believe", "research suggests"). Cite the actual source or drop the claim.
 
 ## Output format
 
