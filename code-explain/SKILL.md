@@ -1,68 +1,48 @@
 ---
 name: code-explain
-description: Use when the user asks you to explain what a piece of code does — requires reading the full project scope first, then producing a two-layer explanation (technical + domain layman's terms) in bullet-point form, grounded in whole-project context.
+description: Use when the user asks you to explain what a piece of code does — requires reading the full project scope first, then producing a concise two-layer explanation (technical + domain layman's terms) grounded in whole-project context.
 ---
 
 # Code Explain
 
-## Overview
+## Step 1 — Read the entire project first (required)
 
-Explain code in two layers: technical (for someone who can read but not deeply write code) and plain-language domain analogy (e.g., baseball for a sports analytics project). Every bullet must be grounded in the full project context — not the snippet in isolation.
+Before writing anything, read `CLAUDE.md` (if present), every script in the project root, any READMEs, and run `ls` to understand the directory structure. Only proceed after you have a complete picture of how the target code fits into the larger system. Explaining before reading the project produces explanations that miss upstream dependencies, downstream consumers, and documented design decisions.
 
-## Step 1 — Read the Entire Project First (Required)
+## Step 2 — Technical explanation
 
-Before writing a single word of explanation, read **all** of the following:
+Write one or two concise paragraphs covering: what role this code plays in the pipeline, what inputs it takes and where they come from, what the core logic does (call out non-obvious thresholds, priors, windows, or algorithmic choices explicitly), what it outputs and what consumes those outputs, and any design decisions documented in CLAUDE.md or a README (cite them directly, don't paraphrase).
 
-- `CLAUDE.md` (if present) — pipeline architecture, constants, design decisions, key terminology
-- Every script in the project root (`.R`, `.py`, `.sql`, `.sh`, etc.) — at minimum skim for structure and how they interrelate
-- Any `README` files
-- Directory structure (`ls` or equivalent) to understand what files exist
+Keep it tight. One idea per sentence. If CLAUDE.md explains *why* something is done a certain way, say so — don't rediscover it.
 
-**Only proceed to explanation after you have a complete picture of how the target code fits into the larger system.** If you explain before reading the project, you will miss upstream dependencies, downstream consumers, and documented design rationale.
+## Step 3 — Layman's explanation
 
-## Step 2 — Technical Explanation
+Re-explain the same code in one or two paragraphs using domain analogies, in the same order as the technical explanation so the reader can cross-reference. For baseball/sports analytics projects, frame logic as scouting decisions, in-game strategy, box-score math, or on-field action — use terms the reader already knows (ERA, xwOBA, pitch count, pull the starter). Each concept in the technical explanation maps to exactly one plain-language counterpart; don't introduce new ideas here.
 
-Write bullet points covering, in order:
+## Writing style (apply throughout)
 
-- **Role in pipeline/system** — what stage or purpose this code serves relative to the whole project
-- **Inputs** — what data or arguments come in and where they originate in the project
-- **Core logic** — how data is transformed, filtered, modeled, or routed; call out non-obvious thresholds, priors, windows, fixed effects, or algorithmic choices
-- **Outputs** — what this produces and what downstream code or users consume it
-- **Key dependencies** — which other scripts, checkpoints, packages, or constants this relies on
-- **Design decisions** — if CLAUDE.md or a README documents WHY something is done a certain way, cite it explicitly (e.g., "pitch count excluded per BIC criterion — see CLAUDE.md")
+Apply humanizer principles to both explanations:
 
-One idea per bullet. No introductory prose. No summary paragraph at the end.
+- Use "is/are/has" rather than "serves as", "stands as", or "boasts"
+- Cut AI vocabulary: additionally, crucial, pivotal, highlight, underscore, showcase, tapestry, landscape, testament, vibrant
+- No -ing phrase tacking onto sentence ends ("...ensuring that", "...reflecting the", "...showcasing how")
+- No rule of three. If two examples cover it, stop at two
+- Vary sentence length. Short sentences after long ones
+- Be specific. "drops 6 inches after commit" beats "generates significant late movement"
+- No vague attributions ("experts believe", "research suggests") — cite the actual source or don't claim it
 
-## Step 3 — Layman's Explanation
-
-Re-explain the same code using domain analogies in the same bullet order so the reader can cross-reference:
-
-- **Baseball / sports analytics projects**: frame logic as scouting decisions, in-game strategy, box-score math, or on-field action. Use terms the user already knows: ERA, xwOBA, pitch count, pull the starter, etc.
-- **Other domains**: identify the domain from CLAUDE.md or project context and match analogies accordingly.
-
-Each technical bullet maps to exactly one plain-language counterpart. Keep the mapping explicit — don't introduce new concepts in the layman's section.
-
-## Output Format
+## Output format
 
 ```
-## Technical Explanation
-- [bullet]
-- [bullet]
-...
+## Technical explanation
+[one or two paragraphs]
 
-## In Plain Terms ([Domain])
-- [bullet matching technical bullet 1]
-- [bullet matching technical bullet 2]
-...
+## In plain terms ([domain])
+[one or two paragraphs]
 ```
 
-No prose paragraphs. No headers within bullet sections. No trailing summary.
+No headers within paragraphs. No trailing summary. No "I hope this helps."
 
-## Quality Checks
+## Quality checks
 
-Before responding, verify:
-
-- Every technical bullet references how the code connects to the rest of the project (not just what the function does in isolation)
-- Layman's bullets use domain vocabulary naturally — no forced analogies
-- Any design decision documented in CLAUDE.md is cited, not paraphrased from scratch
-- If code behavior contradicts or is absent from project documentation, flag it explicitly as a discrepancy
+Before responding: confirm every sentence connects the code to the rest of the project, not just what the function does in isolation. If code behavior contradicts or is absent from project documentation, flag it explicitly.
