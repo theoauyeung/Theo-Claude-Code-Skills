@@ -15,7 +15,7 @@ Before writing anything, read `CLAUDE.md` (if present), every script in the proj
 
 ## Step 2: Create the output file
 
-Save to `docs/explanations/<script-name>.md`. Create `docs/explanations/` if it doesn't exist. Tell the user the path when you finish.
+Save the explanation next to the source file: same directory as the script, same basename, `.md` extension. For `foo/bar/script.py` the output is `foo/bar/script.md`. Overwrite without asking if the file already exists (the explanation is derived from the current source, so it should always reflect the latest code). Tell the user the path when you finish.
 
 ## Step 3: Write the explanation
 
