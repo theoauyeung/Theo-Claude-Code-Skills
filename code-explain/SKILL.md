@@ -1,13 +1,15 @@
 ---
 name: code-explain
-description: Use when the user asks you to explain what a piece of code does. Reads the full project scope first, then writes a per-function (or per-step) bullet-point explanation grounded in whole-project context, saved to a markdown file. Always runs /humanizer on the result before presenting it.
+description: Use when the user asks you to explain what a piece of code does. Reads the full project scope first, then writes a per-function (or per-step) plain-English explanation suitable for a poster or non-technical reader, saved to a markdown file. Always runs /humanizer on the result before presenting it.
 ---
 
 # Code Explain
 
 ## Overview
 
-Explain code the exact way `Shared Work/features/feature_engineering.md` explains `feature_engineering.py`: one section per function in file order, each led by a one-line summary and followed by bullets that spell out specifically how that function works. No "technical vs. plain terms" split. No analogies. No overview paragraphs beyond a short file header. If the file has no functions, do the same structure step by step through the script in order.
+Explain code in a plain, poster-friendly voice. One section per function in file order. Each section leads with a bold **What it does** sentence, then a short bullet list in everyday English. No code variables, no math notation, no formulas. If the code uses a quantity like `sigma`, `config.horizon`, `belief_grid`, or `np.dot`, describe what it represents in words ("residual noise", "planning horizon", "the grid of possible confidence values", "a weighted sum") instead of naming the symbol. If the file has no functions, do the same structure step by step through the script in order.
+
+The reader is a property manager, a non-technical collaborator, or a conference-poster viewer. They should be able to follow what the code does and why without any statistics or programming background.
 
 ## Step 1: Read the whole project first
 
@@ -19,57 +21,60 @@ Save the explanation next to the source file: same directory as the script, same
 
 ## Step 3: Write the explanation
 
-Match the structure of `feature_engineering.md` exactly:
+Match this structure:
 
 ```
-# Explanation: <script-name>.py
+# <Script title in plain English>
 
 `<path/to/script.py>`
 
-<one or two sentences framing what the whole script does inside the pipeline>
+<One short paragraph framing what the whole script does inside the pipeline, in plain English. Name the upstream inputs and downstream consumers by role, not by variable name.>
+
+<Optional: a short bulleted list of the data holders or configuration objects the file defines before the first function, each described in one plain sentence.>
+
+What follows is one plain-English section per function.
 
 ---
 
-### `functionName(args)`
+### `functionName`
 
-<One-line summary of what the function does.>
+**What it does.** <One sentence, no jargon.>
 
-- <specific bullet about a piece of logic>
-- <next bullet>
-- ...
+- <plain-English bullet about what it needs and where that comes from>
+- <plain-English bullet about what it produces and who uses it>
+- <plain-English bullets walking through the logic in order>
+
+**Why <design choice>.** <Optional standalone paragraph for a non-obvious design decision worth defending. Only include when there is a real choice to explain.>
 
 ---
 
-### `nextFunction(args)`
+### `nextFunction`
 
 ...
 ```
 
-### If the file has functions
+### Section rules
 
-One section per function, in the order they appear in the source. Heading format: `` ### `functionName(args)` ``. Each section is:
-
-1. A one-line summary of what the function does overall.
-2. A bullet list covering:
-   - What the function takes in and where those inputs originate upstream.
-   - What it produces and what consumes it downstream.
-   - How the logic works step by step. Name real column names, constants, thresholds, and formulas; quote the actual code when it clarifies the point (e.g. `` `df["caption"].str.len().fillna(0).astype(int)` `` and then say what it does).
-   - Any non-obvious design choice: why this algorithm, threshold, or formula was chosen. Cite `CLAUDE.md` or project docs if the rationale is documented there.
-   - Any leakage guard, fallback, or edge case handled.
-
-Separate sections with `---`.
+- Heading: `` ### `functionName` ``. Do not include the argument list in the heading.
+- First line of the body is always **What it does.** followed by one sentence.
+- Bullets after that walk through the function in plain English. Describe inputs by their role ("the current confidence", "the account identifier"), not by parameter name. Describe outputs the same way.
+- When the function performs a calculation, describe the calculation in words. "Shifts the baseline up or down by the Low or High receptivity gap" instead of `base + theta_i`. "Averages over plausible outcomes using a small set of representative points" instead of "Gauss-Hermite quadrature of order 9". A standard method's name can appear once in parentheses if it helps a technical reader, but the surrounding sentence must stand on its own without it.
+- Any non-obvious design choice (why this algorithm, why this threshold, why this shape of state space) gets its own bold **Why ...** paragraph at the end of the section. Only include when there is a real choice to explain. Cite `CLAUDE.md` or project docs if the rationale is documented there.
+- Separate sections with `---`.
 
 ### If the file has no functions
 
-Walk through each logical step or cell in order. Heading format: `### Step N: <short label>`. Each step gets the same one-line summary plus bullet list as above.
+Walk through each logical step or cell in order. Heading format: `### Step N: <short label>`. Each step gets the same **What it does** sentence plus bullet list, same plain-English rules as above.
 
 ## Writing style
 
-- Specific over vague. "Rows below 0.50 are flagged `pillar_needs_review = True`" beats "Low-confidence rows are flagged."
-- Name real identifiers (columns, constants, filenames). No abstractions where the real name fits.
-- Quote the actual code inline when it clarifies the explanation.
-- If the code mirrors a cited paper or method, cite it the way the source file cites it.
-- No marketing language, no "serves as," no rule-of-three padding, no trailing summaries.
+- Plain English throughout. If a sentence would confuse a reader who has never written code, rewrite it.
+- No code variables, no code identifiers, no attribute paths. "The planning horizon" is fine; `config.horizon` is not.
+- No formulas, no math notation, no Greek letters. Describe the math in words.
+- No inline code quotes of the source. The explanation stands on its own; if a reader wants the code they can open the file.
+- A standard algorithm or method can be named once in parentheses as a signpost for technical readers ("(backward induction)", "(Gauss-Hermite quadrature)"), but the surrounding sentence must still read naturally without that parenthetical.
+- Specific over vague where it does not require jargon. "Posts every day no matter the confidence" beats "Always posts".
+- No marketing language, no "serves as", no rule-of-three padding, no trailing summaries.
 - No em or en dashes anywhere. ASCII hyphens only.
 
 ## Step 4: Run /humanizer
@@ -79,8 +84,9 @@ After the file is written, invoke `/humanizer` on it. Only present the result to
 ## Quality checks
 
 - Every function (or step) in the source file has its own section.
-- Every section leads with a one-line summary before the bullets.
-- Bullets name real identifiers rather than abstractions.
+- Every section leads with a bold **What it does.** sentence before the bullets.
+- No code variables, no attribute paths, no formulas, no Greek letters anywhere in the output.
+- Design decisions worth defending have their own **Why ...** paragraph.
 - Design decisions documented in `CLAUDE.md` or READMEs are cited, not paraphrased from scratch.
 - No em/en dashes anywhere.
 - `/humanizer` has been run.
